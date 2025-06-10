@@ -38,8 +38,8 @@ export const useGameLogic = () => {
     setBuildings(prevBuildings => {
       return prevBuildings.map(building => {
         if (building.isActive && (now - building.lastHarvest) >= TICK_INTERVAL) {
-          const yield = calculateBuildingYield(building);
-          totalRevenue += yield;
+          const buildingYield = calculateBuildingYield(building);
+          totalRevenue += buildingYield;
           return {
             ...building,
             lastHarvest: now
