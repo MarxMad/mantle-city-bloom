@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Building } from '../types/game';
@@ -7,15 +6,20 @@ import { GameState } from '../types/game';
 interface DashboardProps {
   gameState: GameState;
   buildings: Building[];
+  revenueHistory?: { timestamp: number; revenue: number }[];
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ gameState, buildings }) => {
-  // Generate mock revenue data for the chart
-  const revenueData = Array.from({ length: 24 }, (_, i) => ({
-    hour: i,
-    revenue: Math.floor(Math.random() * 200) + 50,
-    tokens: Math.floor(Math.random() * 100) + 20
-  }));
+const Dashboard: React.FC<DashboardProps> = ({ gameState, buildings, revenueHistory }) => {
+  // Usar revenueHistory real si está disponible
+  const revenueData = revenueHistory && revenueHistory.length > 0
+    ? revenueHistory.map((item, i) => ({
+        hour: i + 1,
+        revenue: item.revenue
+      }))
+    : Array.from({ length: 24 }, (_, i) => ({
+        hour: i + 1,
+        revenue: 0
+      }));
 
   // Calculate building distribution
   const buildingStats = buildings.reduce((acc, building) => {
@@ -39,51 +43,58 @@ const Dashboard: React.FC<DashboardProps> = ({ gameState, buildings }) => {
   return (
     <div className="space-y-4">
       <div className="text-center">
-        <h2 className="text-xl font-bold text-primary">City Dashboard</h2>
-        <p className="text-sm text-muted-foreground">Real-time performance metrics</p>
+        <h2 className="text-xl font-bold text-primary">Panel de Control</h2>
+        <p className="text-sm text-muted-foreground">Métricas de rendimiento en tiempo real</p>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 gap-3">
         <div className="glass-card p-3 text-center">
           <div className="text-2xl font-bold text-defi-green">{totalYield}</div>
-          <div className="text-xs text-muted-foreground">Total Yield/tick</div>
+          <div className="text-xs text-muted-foreground">Yield Total/tick</div>
         </div>
         <div className="glass-card p-3 text-center">
           <div className="text-2xl font-bold text-defi-gold">{gameState.totalBuildings}</div>
-          <div className="text-xs text-muted-foreground">Active Buildings</div>
+          <div className="text-xs text-muted-foreground">Edificios Activos</div>
         </div>
       </div>
 
+      {/* Botón de Reclamar recompensas (demo) */}
+      <div className="flex justify-center">
+        <button
+          className="mt-2 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary/80 transition"
+          onClick={() => alert('¡Recompensas reclamadas! (demo)')}
+        >
+          Reclamar recompensas
+        </button>
+      </div>
+
       {/* Revenue Chart */}
-      <div className="chart-container">
-        <h3 className="text-sm font-semibold mb-3 text-foreground">24h Revenue Trend</h3>
-        <div className="h-32">
+      <div className="glass-card p-4">
+        <h3 className="text-sm font-semibold mb-2">Ingresos por Hora</h3>
+        <div className="h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={revenueData}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00FFFF" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#00FFFF" stopOpacity={0.1}/>
+                  <stop offset="5%" stopColor="#00FF80" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#00FF80" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
               <XAxis 
                 dataKey="hour" 
-                stroke="rgba(255,255,255,0.5)"
-                fontSize={10}
-                tick={{ fill: 'rgba(255,255,255,0.5)' }}
+                stroke="#ffffff40"
+                tick={{ fill: '#ffffff40', fontSize: 12 }}
               />
               <YAxis 
-                stroke="rgba(255,255,255,0.5)"
-                fontSize={10}
-                tick={{ fill: 'rgba(255,255,255,0.5)' }}
+                stroke="#ffffff40"
+                tick={{ fill: '#ffffff40', fontSize: 12 }}
               />
               <Area
                 type="monotone"
                 dataKey="revenue"
-                stroke="#00FFFF"
-                strokeWidth={2}
+                stroke="#00FF80"
                 fillOpacity={1}
                 fill="url(#colorRevenue)"
               />
@@ -93,63 +104,39 @@ const Dashboard: React.FC<DashboardProps> = ({ gameState, buildings }) => {
       </div>
 
       {/* Building Distribution */}
-      {buildings.length > 0 && (
-        <div className="chart-container">
-          <h3 className="text-sm font-semibold mb-3 text-foreground">Building Distribution</h3>
-          <div className="h-32">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={buildingDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={20}
-                  outerRadius={50}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {buildingDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="grid grid-cols-2 gap-1 mt-2">
-            {buildingDistribution.map((entry, index) => (
-              <div key={entry.name} className="flex items-center space-x-1">
-                <div 
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                />
-                <span className="text-xs text-muted-foreground truncate">
-                  {entry.name} ({entry.value})
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Performance Score */}
       <div className="glass-card p-4">
-        <h3 className="text-sm font-semibold mb-2 text-foreground">City Performance</h3>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Efficiency</span>
-            <span className="text-defi-green">85%</span>
-          </div>
-          <div className="w-full bg-muted rounded-full h-2">
-            <div className="bg-gradient-to-r from-defi-green to-defi-cyan h-2 rounded-full w-[85%]"></div>
-          </div>
-          
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Risk Level</span>
-            <span className="text-defi-gold">Medium</span>
-          </div>
-          <div className="w-full bg-muted rounded-full h-2">
-            <div className="bg-gradient-to-r from-defi-gold to-defi-red h-2 rounded-full w-[60%]"></div>
-          </div>
+        <h3 className="text-sm font-semibold mb-2">Distribución de Edificios</h3>
+        <div className="h-[200px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={buildingDistribution}
+                cx="50%"
+                cy="50%"
+                innerRadius={40}
+                outerRadius={80}
+                paddingAngle={5}
+                dataKey="value"
+              >
+                {buildingDistribution.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {buildingDistribution.map((entry, index) => (
+            <div key={entry.name} className="flex items-center space-x-2">
+              <div 
+                className="w-3 h-3 rounded-full" 
+                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+              />
+              <span className="text-xs text-muted-foreground">
+                {entry.name}: {entry.value}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

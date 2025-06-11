@@ -1,70 +1,54 @@
-
 import React from 'react';
 import { GameState } from '../types/game';
-import { Building, DollarSign, Coins } from 'lucide-react';
+import { Coins } from 'lucide-react';
+import { WalletConnect } from './WalletConnect';
 
 interface GameHeaderProps {
   gameState: GameState;
+  onOpenBuildingPanel?: () => void;
+  onOpenDashboard?: () => void;
 }
 
-const GameHeader: React.FC<GameHeaderProps> = ({ gameState }) => {
+const GameHeader: React.FC<GameHeaderProps> = ({ gameState, onOpenBuildingPanel, onOpenDashboard }) => {
   return (
-    <header className="h-20 glass border-b border-white/10 px-6 flex items-center justify-between">
-      {/* Game Title */}
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-2">
-          <Building className="w-8 h-8 text-primary animate-pulse-glow" />
-          <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Mantle Tycoon
-            </h1>
-            <p className="text-sm text-muted-foreground">Week {gameState.weekNumber} • City Level {gameState.cityLevel}</p>
-          </div>
+    <header className="w-full glass border-b border-white/10 px-4 py-2 flex flex-wrap items-center justify-between gap-2 sm:px-2 sm:py-1">
+      {/* Logo y Título */}
+      <div className="flex items-center gap-4 min-w-0 flex-shrink-0">
+        <img src="/CityM.png" alt="Logo" className="w-16 h-16 sm:w-12 sm:h-12 rounded-2xl shadow-2xl border-4 border-primary bg-background p-1 mr-2 transition-transform duration-200 hover:scale-105" />
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-lg font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-lg truncate">Mantle City</h1>
+          <p className="text-base sm:text-xs text-muted-foreground hidden xs:block font-semibold truncate">Semana {gameState.weekNumber} • Nivel Ciudad {gameState.cityLevel}</p>
         </div>
       </div>
-
-      {/* Game Stats */}
-      <div className="flex items-center space-x-6">
+      {/* Botones móviles, se apilan en vertical si no caben */}
+      <div className="flex flex-col xs:flex-row flex-shrink-0 gap-2 xs:gap-3 items-center justify-center w-full xs:w-auto order-3 xs:order-none lg:hidden mt-2 xs:mt-0">
+        <button
+          className="px-4 py-2 sm:px-2 sm:py-1 xs:px-1.5 xs:py-1 bg-cyan-400 text-white font-bold rounded-full shadow-md text-sm sm:text-xs xs:text-xs hover:bg-cyan-500 transition w-full xs:w-auto min-h-[36px] sm:min-h-[28px] xs:min-h-[24px]"
+          style={{marginBottom: 0}}
+          onClick={onOpenBuildingPanel}
+        >
+          Edificios DeFi
+        </button>
+        <button
+          className="px-4 py-2 sm:px-2 sm:py-1 xs:px-1.5 xs:py-1 bg-fuchsia-400 text-white font-bold rounded-full shadow-md text-sm sm:text-xs xs:text-xs hover:bg-fuchsia-500 transition w-full xs:w-auto min-h-[36px] sm:min-h-[28px] xs:min-h-[24px]"
+          style={{marginBottom: 0}}
+          onClick={onOpenDashboard}
+        >
+          Dashboard / Eventos
+        </button>
+      </div>
+      {/* Game Stats y Wallet */}
+      <div className="flex items-center gap-4 sm:gap-2 flex-shrink-0 ml-auto">
         {/* Tokens */}
-        <div className="glass-card px-4 py-2 flex items-center space-x-2">
-          <Coins className="w-5 h-5 text-defi-gold" />
+        <div className="glass-card px-4 py-2 flex items-center gap-2 sm:px-2 sm:py-1">
+          <Coins className="w-6 h-6 text-defi-gold" />
           <div>
-            <p className="text-sm text-muted-foreground">$BLD Tokens</p>
-            <p className="text-lg font-bold text-defi-gold">{gameState.tokens.toLocaleString()}</p>
+            <p className="text-base sm:text-xs text-muted-foreground font-semibold">$BLD</p>
+            <p className="text-xl sm:text-base font-bold text-defi-gold">{gameState.tokens.toLocaleString()}</p>
           </div>
         </div>
-
-        {/* Weekly Revenue */}
-        <div className="glass-card px-4 py-2 flex items-center space-x-2">
-          <DollarSign className="w-5 h-5 text-defi-green" />
-          <div>
-            <p className="text-sm text-muted-foreground">Weekly Revenue</p>
-            <p className="text-lg font-bold text-defi-green">{gameState.weeklyRevenue.toLocaleString()}</p>
-          </div>
-        </div>
-
-        {/* Buildings Count */}
-        <div className="glass-card px-4 py-2 flex items-center space-x-2">
-          <Building className="w-5 h-5 text-primary" />
-          <div>
-            <p className="text-sm text-muted-foreground">Buildings</p>
-            <p className="text-lg font-bold text-primary">{gameState.totalBuildings}</p>
-          </div>
-        </div>
-
-        {/* Reputation */}
-        <div className="glass-card px-4 py-2">
-          <p className="text-sm text-muted-foreground">Reputation</p>
-          <div className="flex items-center space-x-2">
-            <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-defi-green to-defi-cyan transition-all duration-300"
-                style={{ width: `${gameState.reputation}%` }}
-              />
-            </div>
-            <span className="text-sm font-medium">{gameState.reputation}%</span>
-          </div>
-        </div>
+        {/* Wallet Connect */}
+        <div className="ml-2"><WalletConnect /></div>
       </div>
     </header>
   );

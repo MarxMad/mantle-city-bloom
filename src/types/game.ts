@@ -1,4 +1,3 @@
-
 export interface Building {
   id: string;
   type: BuildingType;
@@ -17,6 +16,7 @@ export interface BuildingType {
   description: string;
   baseYield: number;
   baseCost: number;
+  maintenanceCost: number; // Costo de mantenimiento por tick
   icon: string;
   color: string;
   category: 'defi' | 'infrastructure' | 'special';

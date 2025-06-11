@@ -1,10 +1,10 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { Building, BuildingType, GameState, EconomicEvent } from '../types/game';
 import { BUILDING_TYPES, ECONOMIC_EVENTS } from '../data/gameData';
 
 const GRID_SIZE = 20;
-const TICK_INTERVAL = 3000; // 3 seconds per tick
+const TICK_INTERVAL = 60000; // 60 segundos por tick
+const EVENT_INTERVAL = 180000; // 3 minutos
 
 export const useGameLogic = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -20,6 +20,7 @@ export const useGameLogic = () => {
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [currentEvent, setCurrentEvent] = useState<EconomicEvent | null>(null);
   const [eventDuration, setEventDuration] = useState(0);
+  const [revenueHistory, setRevenueHistory] = useState<{ timestamp: number; revenue: number }[]>([]);
 
   // Game tick - processes yields and events
   useEffect(() => {
@@ -30,16 +31,30 @@ export const useGameLogic = () => {
     return () => clearInterval(interval);
   }, [buildings, currentEvent]);
 
+  // Generar eventos de mercado automáticamente cada 3 minutos
+  useEffect(() => {
+    const eventInterval = setInterval(() => {
+      generateMarketEventWithNebula();
+    }, EVENT_INTERVAL);
+    return () => clearInterval(eventInterval);
+  }, []);
+
   const processGameTick = useCallback(() => {
     const now = Date.now();
-    
-    // Process building yields
     let totalRevenue = 0;
+    let totalMaintenance = 0;
+
     setBuildings(prevBuildings => {
       return prevBuildings.map(building => {
         if (building.isActive && (now - building.lastHarvest) >= TICK_INTERVAL) {
+          // Calcular yield con modificadores de eventos
           const buildingYield = calculateBuildingYield(building);
           totalRevenue += buildingYield;
+
+          // Calcular costo de mantenimiento
+          const maintenanceCost = building.type.maintenanceCost * building.level;
+          totalMaintenance += maintenanceCost;
+
           return {
             ...building,
             lastHarvest: now
@@ -49,12 +64,19 @@ export const useGameLogic = () => {
       });
     });
 
-    // Update game state with revenue
-    if (totalRevenue > 0) {
+    // Guardar el revenue real en el historial
+    setRevenueHistory(prev => {
+      const newHistory = [...prev, { timestamp: now, revenue: totalRevenue - totalMaintenance }];
+      // Mantener solo los últimos 24 ticks (24 horas)
+      return newHistory.slice(-24);
+    });
+
+    // Update game state with revenue and maintenance
+    if (totalRevenue > 0 || totalMaintenance > 0) {
       setGameState(prev => ({
         ...prev,
-        tokens: prev.tokens + totalRevenue,
-        weeklyRevenue: prev.weeklyRevenue + totalRevenue,
+        tokens: prev.tokens + totalRevenue - totalMaintenance,
+        weeklyRevenue: prev.weeklyRevenue + totalRevenue - totalMaintenance,
         lastUpdate: now
       }));
     }
@@ -182,6 +204,17 @@ export const useGameLogic = () => {
     console.log('New economic event:', randomEvent.title);
   };
 
+  // Función para obtener un evento de Nebula (simulada por ahora)
+  const generateMarketEventWithNebula = async () => {
+    // Aquí deberías hacer la llamada real a Nebula de thirdweb
+    // Por ahora, usamos el sistema local
+    generateRandomEvent();
+    // Ejemplo de integración:
+    // const nebulaEvent = await getNebulaMarketEvent();
+    // setCurrentEvent(nebulaEvent);
+    // setEventDuration(nebulaEvent.duration);
+  };
+
   return {
     gameState,
     buildings,
@@ -189,6 +222,7 @@ export const useGameLogic = () => {
     placeBuildingOnGrid,
     upgradeBuildingAt,
     sellBuildingAt,
-    generateRandomEvent
+    generateRandomEvent,
+    revenueHistory
   };
 };

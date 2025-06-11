@@ -1,73 +1,80 @@
-# Welcome to your Lovable project
+# Mantle Tycoon 🏙️
 
-## Project info
+## Descripción del Juego
 
-**URL**: https://lovable.dev/projects/163e4c86-aa3f-42c4-95e2-f109b441b8e6
+Mantle Tycoon es un juego de estrategia y simulación económica que te permite construir tu propia ciudad DeFi sobre la red Mantle. Diseña, construye y gestiona tu metrópolis financiera mientras navegas por los desafíos del mundo DeFi.
 
-## How can I edit this code?
+### Características Principales
 
-There are several ways of editing your application.
+- **Construcción de Ciudad DeFi**: Cada edificio representa una infraestructura DeFi (DEX, lending, stablecoins, NFT markets)
+- **Simulación Económica**: Motor económico impulsado por Nebula que genera eventos semanales
+- **Integración Web3**: Conexión directa con wallets para gestión de tokens
+- **Competitividad**: Clasificación semanal con leaderboard y recompensas
 
-**Use Lovable**
+### Eventos Económicos
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/163e4c86-aa3f-42c4-95e2-f109b441b8e6) and start prompting.
+El juego simula eventos semanales que afectan tu ciudad:
+- Inflación
+- Ataques hackers
+- Forks de protocolo
+- Cambios en yield farming
+- Crisis de liquidez
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tecnologías Utilizadas
 
-**Use your preferred IDE**
+- **Frontend**: React + TypeScript
+- **UI/UX**: shadcn-ui + Tailwind CSS
+- **Blockchain**: Mantle Network
+- **Simulación**: Nebula
+- **Desarrollo**: Vite
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Cómo Jugar
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Conecta tu wallet Web3
+2. Comienza construyendo tu primera infraestructura DeFi
+3. Gestiona recursos y equilibra riesgo/retorno
+4. Responde a eventos económicos
+5. Compite por la mejor economía semanal
 
-Follow these steps:
+## Mecánicas del Juego
+
+- **Construcción**: Edificios que generan tokens ($BLD) con yields variables
+- **Recursos**: Gestión de recursos limitados para construcción
+- **Tokens**: Integración con wallet Web3 para gastar tokens
+- **Eventos**: Sistema de eventos aleatorios que afectan yields y edificios
+- **Progresión**: Sistema de niveles y experiencia para desbloquear edificios
+
+## Interfaz
+
+- Vista isométrica tipo SimCity
+- Dashboard con métricas en tiempo real
+- Sistema de alertas para eventos
+- Controles intuitivos para gestión de edificios
+
+## Características Futuras
+
+- Smart contracts para token y NFT de ciudad
+- Modo multijugador
+- Sistema de logros y recompensas
+- Integración con más protocolos DeFi
+
+## Desarrollo Local
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clonar el repositorio
+git clone <URL_DEL_REPO>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Instalar dependencias
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Contribuir
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Las contribuciones son bienvenidas. Por favor, revisa nuestras guías de contribución antes de enviar un pull request.
 
-**Use GitHub Codespaces**
+## Licencia
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/163e4c86-aa3f-42c4-95e2-f109b441b8e6) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BUILDING_TYPES } from '../data/gameData';
 import { BuildingType } from '../types/game';
@@ -23,8 +22,8 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
   };
 
   const getRiskLabel = (riskLevel: number): string => {
-    const labels = ['Very Low', 'Low', 'Medium', 'High', 'Very High'];
-    return labels[riskLevel - 1] || 'Unknown';
+    const labels = ['Muy Bajo', 'Bajo', 'Medio', 'Alto', 'Muy Alto'];
+    return labels[riskLevel - 1] || 'Desconocido';
   };
 
   const getRiskColor = (riskLevel: number): string => {
@@ -37,10 +36,10 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
     <div className="space-y-4">
       <div className="text-center">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          DeFi Buildings
+          Edificios DeFi
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Select a building to place on your city
+          Selecciona un edificio para construir en tu ciudad
         </p>
       </div>
 
@@ -55,8 +54,9 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
               key={buildingType.id}
               className={`
                 glass-card p-4 cursor-pointer transition-all duration-200
-                ${isSelected ? 'ring-2 ring-primary glow-primary' : 'hover:bg-white/15'}
+                ${isSelected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : 'hover:bg-white/15'}
                 ${affordable ? '' : 'opacity-50 cursor-not-allowed'}
+                rounded-lg backdrop-blur-sm
               `}
               onClick={() => {
                 if (affordable) {
@@ -91,7 +91,7 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
                   <div className="flex items-center justify-between mt-3">
                     {/* Yield */}
                     <div>
-                      <span className="text-xs text-muted-foreground">Yield: </span>
+                      <span className="text-xs text-muted-foreground">Rendimiento: </span>
                       <span className="text-defi-green font-medium">
                         {buildingType.baseYield} $BLD/tick
                       </span>
@@ -99,7 +99,7 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
 
                     {/* Risk Level */}
                     <div>
-                      <span className="text-xs text-muted-foreground">Risk: </span>
+                      <span className="text-xs text-muted-foreground">Riesgo: </span>
                       <span className={`text-xs font-medium ${getRiskColor(buildingType.riskLevel)}`}>
                         {getRiskLabel(buildingType.riskLevel)}
                       </span>
@@ -109,7 +109,9 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
                   {/* Category Badge */}
                   <div className="mt-2">
                     <span className="inline-block px-2 py-1 text-xs bg-primary/20 text-primary rounded-full capitalize">
-                      {buildingType.category}
+                      {buildingType.category === 'defi' ? 'DeFi' : 
+                       buildingType.category === 'infrastructure' ? 'Infraestructura' : 
+                       buildingType.category === 'special' ? 'Especial' : buildingType.category}
                     </span>
                   </div>
                 </div>
@@ -117,18 +119,18 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
 
               {/* Selection Indicator */}
               {isSelected && (
-                <div className="mt-3 p-2 bg-primary/20 rounded border border-primary/30">
+                <div className="mt-3 p-2 bg-primary/20 rounded-lg border border-primary/30">
                   <p className="text-xs text-primary text-center">
-                    ✓ Selected - Click on the grid to place
+                    ✓ Seleccionado - Click en el grid para colocar
                   </p>
                 </div>
               )}
 
               {/* Insufficient Funds */}
               {!affordable && (
-                <div className="mt-3 p-2 bg-destructive/20 rounded border border-destructive/30">
+                <div className="mt-3 p-2 bg-destructive/20 rounded-lg border border-destructive/30">
                   <p className="text-xs text-destructive text-center">
-                    Insufficient funds ({(cost - playerTokens).toLocaleString()} $BLD needed)
+                    Fondos insuficientes ({(cost - playerTokens).toLocaleString()} $BLD necesarios)
                   </p>
                 </div>
               )}
@@ -143,7 +145,7 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({
           onClick={() => onSelectType(null)}
           className="w-full py-2 px-4 bg-secondary hover:bg-secondary/80 rounded-lg transition-colors"
         >
-          Clear Selection
+          Limpiar Selección
         </button>
       )}
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Building } from '../types/game';
 import BuildingTile from './BuildingTile';
@@ -11,7 +10,7 @@ interface CityGridProps {
   onSellBuilding: (x: number, y: number) => boolean;
 }
 
-const GRID_SIZE = 12;
+const GRID_SIZE = 7;
 
 const CityGrid: React.FC<CityGridProps> = ({
   buildings,
@@ -30,10 +29,8 @@ const CityGrid: React.FC<CityGridProps> = ({
     const existingBuilding = getBuildingAt(x, y);
     
     if (existingBuilding) {
-      // If building exists, try to upgrade it
       onUpgradeBuilding(x, y);
     } else if (selectedBuildingType) {
-      // If no building and type selected, place new building
       const success = onPlaceBuilding(x, y, selectedBuildingType);
       if (success) {
         console.log(`Placed ${selectedBuildingType} at (${x}, ${y})`);
@@ -62,19 +59,20 @@ const CityGrid: React.FC<CityGridProps> = ({
           <div
             key={`${x}-${y}`}
             className={`
-              relative w-16 h-16 border border-white/10 cursor-pointer transition-all duration-200
-              ${isHovered ? 'bg-white/20 border-primary' : 'bg-white/5 hover:bg-white/10'}
+              relative aspect-square w-full h-full min-w-0 min-h-0 flex items-center justify-center
+              border-2 rounded-2xl transition-all duration-200
+              ${isHovered ? 'border-primary bg-primary/10' : 'border-white/10 bg-white/5'}
               ${canPlace ? 'border-primary/50' : ''}
               ${building ? 'bg-white/10' : ''}
+              hover:border-primary/50 hover:bg-white/10
+              shadow-lg hover:shadow-xl
+              cursor-pointer
             `}
-            style={{
-              transform: 'rotateX(60deg) rotateY(-30deg)',
-              transformStyle: 'preserve-3d'
-            }}
             onClick={() => handleCellClick(x, y)}
             onContextMenu={(e) => handleCellRightClick(e, x, y)}
             onMouseEnter={() => setHoveredCell({x, y})}
             onMouseLeave={() => setHoveredCell(null)}
+            style={{ aspectRatio: '1 / 1' }}
           >
             {building && (
               <BuildingTile 
@@ -85,9 +83,9 @@ const CityGrid: React.FC<CityGridProps> = ({
             
             {/* Placement preview */}
             {canPlace && isHovered && (
-              <div className="absolute inset-0 border-2 border-primary bg-primary/20 rounded animate-pulse">
+              <div className="absolute inset-0 border-2 border-primary bg-primary/20 rounded-2xl animate-pulse">
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-2xl">+</span>
+                  <span className="text-2xl text-primary">+</span>
                 </div>
               </div>
             )}
@@ -105,35 +103,36 @@ const CityGrid: React.FC<CityGridProps> = ({
   };
 
   return (
-    <div className="h-full flex items-center justify-center iso-grid relative overflow-hidden">
+    <div className="h-full w-full flex items-center justify-center relative overflow-hidden min-h-0 min-w-0">
       {/* Grid Container */}
       <div 
-        className="grid gap-1 perspective-1000"
+        className="grid bg-gradient-to-br from-background/50 to-background/80 rounded-2xl backdrop-blur-sm w-full h-full min-h-0 min-w-0"
         style={{
           gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
           gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
-          transform: 'rotateX(0deg) rotateY(0deg) scale(0.8)',
-          transformStyle: 'preserve-3d'
+          gap: '0.1rem',
+          width: '100%',
+          height: '100%',
         }}
       >
         {renderGrid()}
       </div>
 
       {/* Instructions */}
-      <div className="absolute bottom-4 left-4 glass-card p-4 max-w-xs">
-        <h3 className="font-semibold mb-2 text-primary">Controls</h3>
-        <ul className="text-sm space-y-1 text-muted-foreground">
-          <li>• Left click: Place/Upgrade building</li>
-          <li>• Right click: Sell building</li>
-          <li>• Select building type from left panel</li>
+      <div className="absolute bottom-4 left-4 glass-card p-4 max-w-xs backdrop-blur-md xs:static xs:mt-2 xs:p-2 xs:text-xs xs:max-w-full">
+        <h3 className="font-semibold mb-2 text-primary">Controles</h3>
+        <ul className="text-sm space-y-1 text-muted-foreground xs:text-xs">
+          <li>• Click izquierdo: Colocar/Mejorar edificio</li>
+          <li>• Click derecho: Vender edificio</li>
+          <li>• Selecciona el tipo de edificio del panel izquierdo</li>
         </ul>
       </div>
 
       {/* Selection indicator */}
       {selectedBuildingType && (
-        <div className="absolute top-4 left-4 glass-card p-3">
-          <p className="text-sm text-muted-foreground">Selected:</p>
-          <p className="font-semibold text-primary capitalize">{selectedBuildingType.replace('-', ' ')}</p>
+        <div className="absolute top-4 left-4 glass-card p-3 backdrop-blur-md xs:static xs:mt-2 xs:p-2 xs:text-xs xs:max-w-full">
+          <p className="text-sm text-muted-foreground xs:text-xs">Seleccionado:</p>
+          <p className="font-semibold text-primary capitalize xs:text-xs">{selectedBuildingType.replace('-', ' ')}</p>
         </div>
       )}
     </div>
